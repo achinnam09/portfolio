@@ -8,3 +8,31 @@ body {
     margin-inline: auto;
     padding: 1rem;
 }
+nav {
+    display: flex;
+    margin-bottom: 1em;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: oklch(80% 3% 200);
+}
+nav a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.5em;
+}
+.current {
+    border-bottom: 0.43em solid oklch(80% 3% 200);
+    padding-bottom: 0.2em;
+}
+:root {
+    --color-accent: oklch(65% 50% 0);
+}
+html {
+    accent-color: var(--color-accent);
+}
+nav a:hover {
+    border-bottom: 0.4em solid var(--color-accent);
+    background-color: oklch(90% 10% 0);
+}
