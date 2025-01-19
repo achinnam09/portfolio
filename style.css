@@ -58,6 +58,9 @@ button {
 article {
     grid-row: span 3;
 }
+.projects h2 {
+    margin: 0;
+}
 h1 {
     font-size: 2.5em;
 }
