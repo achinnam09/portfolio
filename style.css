@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
 body.resume-page {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.2em;
+    gap: 0.2em;
     max-width: 75ch;
     margin: 0 auto;
     padding: 1rem;
