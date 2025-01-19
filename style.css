@@ -68,3 +68,68 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.1;
     text-wrap: balance;
 }
+body.resume-page {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2em;
+    max-width: 75ch;
+    margin: 0 auto;
+    padding: 1rem;
+}
+body.resume-page h1 {
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 1em;
+}
+body.resume-page section {
+    display: grid;
+    gap: 0.5em;
+}
+body.resume-page h2 {
+    font-size: 1.8em;
+    margin-bottom: 0.5em;
+}
+body.resume-page ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+body.resume-page ul li {
+    padding-left: 1em;
+    margin-bottom: 0.5em;
+    transition: background-color 0.3s ease;
+}
+body.resume-page ul li:hover {
+    background-color: #f0f0f0;
+}
+body.resume-page section > .contact-info {
+    display: grid;
+    gap: 0.5em;
+}
+body.resume-page section > .education {
+    display: grid;
+    gap: 0.5em;
+}
+body.resume-page section > .experience {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5em;
+}
+body.resume-page article {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+body.resume-page article header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+body.resume-page article header h3 {
+    font-size: 1.3em;
+}
+body.resume-page article header time {
+    font-style: italic;
+    color: #666;
+}
