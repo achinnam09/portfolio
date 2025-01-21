@@ -72,7 +72,7 @@ body.resume-page {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.2em;
-    max-width: 75ch;
+    max-width: 100ch;
     margin: 0 auto;
     padding: 1rem;
 }
