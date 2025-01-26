@@ -79,4 +79,20 @@ select.addEventListener('input', function (event) {
     setColorScheme(event.target.value);
 });
 
+const form = document.querySelector('#contact-form');
+
+form?.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const data = new FormData(form);
+
+    let url = form.action + '?';
+
+    for (let [name, value] of data) {
+        url += `${encodeURIComponent(name)}=${encodeURIComponent(value)}&`;
+    }
+
+    url = url.slice(0, -1); 
+    location.href = url; 
+});
 
