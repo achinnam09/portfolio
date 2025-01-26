@@ -11,9 +11,10 @@ body {
 nav {
     display: flex;
     margin-bottom: 1em;
+    --border-color: oklch(50% 10% 200 / 40%);
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: oklch(80% 3% 200);
+    border-bottom-color: var(--border-color);
 }
 nav a {
     flex: 1;
@@ -23,10 +24,11 @@ nav a {
     padding: 0.5em;
 }
 .current {
-    border-bottom: 0.43em solid oklch(80% 3% 200);
+    border-bottom: 0.43em solid var(--border-color);
     padding-bottom: 0.2em;
 }
 :root {
+    color-scheme: light dark;
     --color-accent: oklch(65% 50% 0);
 }
 html {
@@ -34,7 +36,7 @@ html {
 }
 nav a:hover {
     border-bottom: 0.4em solid var(--color-accent);
-    background-color: oklch(90% 10% 0);
+    background-color: color-mix(in oklch, var(--color-accent), canvas 85%);
 }
 form {
     display: grid;
@@ -132,4 +134,22 @@ body.resume-page article header h3 {
 body.resume-page article header time {
     font-style: italic;
     color: #666;
+}
+:root {
+    color-scheme: light dark;
+}
+.color-scheme {
+    position: absolute; 
+    top: 1rem; 
+    right: 1rem;
+    font-size: 80%; 
+    font-family: inherit;
+}
+.color-scheme select {
+    padding: 0.3em;
+    font-size: 1rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 4px;
+    background-color: Canvas; 
+    color: CanvasText; 
 }
