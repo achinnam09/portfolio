@@ -36,10 +36,6 @@ for (let p of pages) {
         url = basePath + url;
     }
 
-    // url = !document.documentElement.classList.contains('home') && !url.startsWith('http')
-    //     ? '../' + url
-    //     : url;
-
     let a = document.createElement('a');
     a.href = url;
     a.textContent = title;
@@ -47,10 +43,6 @@ for (let p of pages) {
     if (location.href.endsWith(a.href)) {
         a.classList.add("current");
     }
-
-    // if (a.host === location.host && a.pathname === location.pathname) {
-    //     a.classList.add('current');
-    // }
 
     if (a.host !== location.host) {
         a.target = '_blank';
