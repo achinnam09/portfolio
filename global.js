@@ -99,3 +99,39 @@ form?.addEventListener('submit', function (event) {
     location.href = url; 
 });
 
+export async function fetchJSON(url){
+    try{
+        // Fetch the JSON file from the given URL
+        const response = await fetch(url);
+
+        // If the response is not successful, throw an error
+        if (!response.ok){
+            throw new Error(`Failed to fetch projects: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    }
+    catch (error){
+        console.error('Error fetching or parsing JSON data', error);
+    }
+    
+}
+
+export function renderProjects(project, containerElement, headingLevel = 'h2'){
+    containerElement.innerHTML = '';
+    for (let p of project) {
+        const article = document.createElement('article');
+
+        article.innerHTML = `
+    <h3>${p.title}</h3>
+    <img src="${p.image}" alt="${p.title}">
+    <p>${p.description}</p>
+`;
+
+        containerElement.appendChild(article);
+    }
+
+    
+
+}
