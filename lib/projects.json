@@ -1,19 +1,22 @@
 {
     "projects": [
         {
-            "title": "Lorem ipsum dolor sit.",
+            "title": "Lights Out",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-            "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis vitae nostrum nihil, tenetur sapiente officiis in ducimus aliquam quam voluptatem, delectus veniam debitis quasi et impedit eos dolorem natus culpa."
+            "description": "Data driven exploration of major power outages in the United States between 2000 and 2016"
         },
         {
-            "title": "Ipsa vel praesentium soluta.",
+            "title": "Mini Git",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-            "description": "Assumenda, numquam eligendi hic illum fuga nobis distinctio temporibus et facilis cumque quasi provident non laborum esse mollitia rerum adipisci quia minima. Architecto, accusamus eligendi corrupti dicta vitae ipsa rem."
+            "description": "Implementation of a version-control system that mimics some of the basic features of Git"
         },
         {
-            "title": "Unde ut quo eveniet!",
+            "title": "Loan Applications",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-            "description": "Ut inventore quo libero alias magnam, ipsa, quod odio esse quae minima nam! Fugiat omnis natus, maxime, perspiciatis unde iusto officia ratione mollitia, soluta nostrum corrupti quasi facere dolore. Qui."
+            "description": "Analysis performed on a dataset of loan applications to explore various trends, calculate statistics, and identify phenomena such as Simpson's Paradox"
         },
         {
             "title": "Quam iste dolorum alias?",
