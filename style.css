@@ -156,30 +156,31 @@ body.resume-page article header time {
 #profile-stats {
     margin-top: 20px;
     text-align: center;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial', sans-serif; 
 }
-
 #profile-stats dl {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     text-align: center;
-    gap: 10px;
+    gap: 10px; 
     margin: 0 auto;
 }
-
 #profile-stats dt {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.9em;
-    color: #555;
+    color: #aaa; 
     grid-row: 1;
 }
-
 #profile-stats dd {
     font-size: 1.5em;
     font-weight: bold;
-    color: #000;
+    color: #9b59b6;
     margin: 0;
-    grid-row: 2;
+    grid-row: 2; 
 }
-
+#profile-stats {
+    padding: 20px;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
