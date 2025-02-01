@@ -153,3 +153,33 @@ body.resume-page article header time {
     background-color: Canvas; 
     color: CanvasText; 
 }
+#profile-stats {
+    margin-top: 20px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+#profile-stats dl {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+    gap: 10px;
+    margin: 0 auto;
+}
+
+#profile-stats dt {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    color: #555;
+    grid-row: 1;
+}
+
+#profile-stats dd {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000;
+    margin: 0;
+    grid-row: 2;
+}
+
