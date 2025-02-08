@@ -2,13 +2,13 @@
     "projects": [
         {
             "title": "Lights Out",
-            "year": "2024",
+            "year": "2025",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Data driven exploration of major power outages in the United States between 2000 and 2016"
         },
         {
             "title": "Mini Git",
-            "year": "2024",
+            "year": "2025",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Implementation of a version-control system that mimics some of the basic features of Git"
         },
@@ -20,46 +20,55 @@
         },
         {
             "title": "Quam iste dolorum alias?",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Labore commodi aperiam mollitia numquam doloremque. Molestiae minus quod nobis veritatis nam incidunt natus ipsa ducimus dolores dolor asperiores, illo in, sequi fugit cupiditate laudantium placeat molestias itaque deleniti! Maxime?"
         },
         {
             "title": "Incidunt laboriosam necessitatibus numquam?",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Deleniti nostrum non eveniet provident vitae hic natus dignissimos ex deserunt corporis minima delectus impedit assumenda tempore perferendis eum, ab nesciunt mollitia atque similique velit iusto nobis, placeat doloribus? Harum?"
         },
         {
             "title": "Eveniet vel ducimus libero.",
+            "year": "2024",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Atque, fugit. Eum minus ullam, aspernatur et animi aut nostrum ad eaque quo non illum quos tempore ipsum? Fuga esse hic quos accusantium error suscipit cum inventore voluptates eos ex?"
         },
         {
             "title": "Id qui dolor minima.",
+            "year": "2023",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Neque, nostrum placeat autem soluta reiciendis commodi. Sed atque repellendus assumenda nobis! Eos alias laboriosam reprehenderit odio qui optio exercitationem necessitatibus itaque maxime, eaque, quibusdam suscipit. Nulla autem fugiat natus."
         },
         {
             "title": "Aperiam distinctio eveniet nulla.",
+            "year": "2023",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Quod delectus asperiores quisquam natus cumque veritatis, hic iste corporis ipsam totam debitis architecto saepe aliquam consequatur recusandae! Exercitationem, enim repudiandae! Doloremque, labore temporibus? Explicabo autem asperiores consequuntur provident expedita."
         },
         {
             "title": "Neque ipsam necessitatibus cumque.",
+            "year": "2023",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Labore exercitationem veritatis laborum qui distinctio pariatur eaque explicabo, doloremque odio officiis asperiores repudiandae natus expedita, unde necessitatibus minus voluptatem ab quidem maxime maiores delectus fuga cum. Neque, saepe labore."
         },
         {
             "title": "Animi id totam officia?",
+            "year": "2023",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Ipsum aliquid delectus adipisci maxime sed voluptas iste sapiente modi! Fugit, nesciunt ab amet adipisci aspernatur ratione, voluptate quod omnis, soluta odit voluptatum! Itaque cum necessitatibus dolorum officia ut quibusdam!"
         },
         {
             "title": "Ipsam adipisci aliquam corporis!",
+            "year": "2022",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Veniam excepturi fugiat animi enim modi ducimus dolorem aspernatur iusto nobis fuga, ipsa ratione iste consequatur quo velit suscipit, distinctio ex ullam tempora alias magni? Totam numquam a non aut."
         },
         {
             "title": "Doloremque laudantium animi sunt.",
+            "year": "2022",
             "image": "https://vis-society.github.io/labs/2/images/empty.svg",
             "description": "Reprehenderit obcaecati pariatur rem quam, excepturi nam architecto at, adipisci debitis placeat maxime, qui cumque maiores nemo earum iure veritatis soluta eius molestiae voluptas. Magnam beatae officiis repellat placeat reiciendis."
         }
