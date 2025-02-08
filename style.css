@@ -185,3 +185,13 @@ body.resume-page article header time {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
+.project-year {
+    font-family: Baskerville, serif;
+    font-variant-numeric: oldstyle-nums;
+    color: #666;
+    margin-top: 0.1em;
+    font-size: 0.9em;
+}
+article p {
+    margin-bottom: 0.5em;
+}
