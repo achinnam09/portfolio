@@ -229,11 +229,19 @@ article p {
 .legend {
     flex: 1;
 }
-&:has(path:hover) {
-    path:not(hover) {
-        opactiy: 0.5;
-    }
+svg:has(path:hover) path:not(:hover) {
+    opacity: 0.5;
+}
+.seleted {
+    --color: oklch(60% 45% 0);
+}
+.selected:is(path) {
+    fill: oklch(60% 45% 0);
+}
+.legend-item.selected .swatch {
+    background-color: oklch(60% 45% 0);
 }
 path {
-    transition: 300ms;
+    cursor: pointer;
+    transition: opacity 300ms;
 }

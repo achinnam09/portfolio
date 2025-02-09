@@ -3,6 +3,9 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
 (async function loadProjects() {
     try {
+
+        let selectedIndex = -1;
+        
         const projectsData = await fetchJSON('../lib/projects.json');
         const projects = projectsData.projects;
 
@@ -62,13 +65,28 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
                 svg
                     .append('path')
                     .attr('d', arc)
-                    .attr('fill', colors(idx));
+                    .attr('fill', colors(idx))
+                    .attr('class', idx === selectedIndex ? 'selected' : '')
+                    .on('click', () => {
+                        selectedIndex = selectedIndex === idx ? -1 : idx;
+                        svg.selectAll('path').attr('class', (_, i) => i === selectedIndex ? 'selected' : '');
+                        legend.selectAll('li').attr('class', (_, i) => i === selectedIndex ? 'selected legend-item' : 'legend-item');
+
+                        if (selectedIndex === -1) {
+                            renderProjects(projects, projectsContainer, 'h2');
+                        }
+                        else {
+                            const selectedYear = data[selectedIndex].label;
+                            const filteredProjects = projects.filter(p => p.year === selectedYear);
+                            renderProjects(filteredProjects, projectsContainer, 'h2');
+                        }
+                    })
             });
 
             data.forEach((d, idx) => {
                 legend.append('li')
                     .attr('style', `--color:${colors(idx)}`)
-                    .attr('class', 'legend-item')
+                    .attr('class', idx === selectedIndex ? 'selected legend-item' : 'legend-item')
                     .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
             });
         }
