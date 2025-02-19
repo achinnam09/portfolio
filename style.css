@@ -287,4 +287,14 @@ path {
     grid-row: 2;
 }
 
+.gridlines path {
+    stroke: none;
+}
+
+.gridlines line {
+    stroke: #ddd;  /* Light gray */
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
 
