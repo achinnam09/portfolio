@@ -245,3 +245,46 @@ path {
     cursor: pointer;
     transition: opacity 300ms;
 }
+.stats-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 80ch;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.stats-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-rows: auto auto;
+    gap: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-grid dt {
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+    grid-row: 1;
+}
+
+.stats-grid dd {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    grid-row: 2;
+}
+
+
