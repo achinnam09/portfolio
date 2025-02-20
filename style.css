@@ -297,4 +297,88 @@ path {
     shape-rendering: crispEdges;
 }
 
+dl.info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 10px;
+    background: #fff;
+    color: #333;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    border: 1px solid #ddd;
+    width: max-content;
+    transition-duration: 500ms;
+    transition-property: opacity, visibility;
+}
 
+dl.info dt {
+    font-weight: bold;
+    color: #666;
+    text-align: right;
+}
+
+dl.info dd {
+    margin: 0;
+    padding: 0;
+}
+
+dl.info[hidden]:not(:hover, :focus-within) {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+.tooltip {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(8px);
+    font-size: 0.9em;
+    max-width: 260px;
+    display: none;
+    z-index: 1000;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#commit-tooltip {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px 10px;
+    align-items: center;
+}
+
+#commit-tooltip dt {
+    font-weight: bold;
+    color: #555;
+}
+
+#commit-tooltip dd {
+    margin: 0;
+    font-weight: normal;
+    color: #222;
+}
+
+#commit-tooltip a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#commit-tooltip a:hover {
+    text-decoration: underline;
+}
+
+circle {
+    transition: transform 200ms ease-in-out;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+circle:hover {
+    transform: scale(1.5);
+}
