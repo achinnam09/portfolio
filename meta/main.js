@@ -3,6 +3,10 @@ let commits = [];
 let xScale, yScale;
 let brushSelection = null;
 let selectedCommits = [];
+
+let commitProgress = 100;
+let timeScale;
+
 async function loadData() {
     data = await d3.csv('loc.csv', (row) => ({
         ...row,
@@ -17,6 +21,32 @@ async function loadData() {
     processCommits();
     displayStats();
     createScatterPlot();
+
+    const dateExtent = d3.extent(commits, d => d.datetime);
+    timeScale = d3.scaleLinear()
+        .domain([0, 100])
+        .range(dateExtent);
+
+    const slider = document.getElementById('commit-progress');
+    const timeSpan = document.getElementById('selected-time');
+
+    // Initialize the displayed date
+    updateSliderDisplay();
+
+    // Listen for slider input
+    slider.addEventListener('input', (e) => {
+        commitProgress = +e.target.value;
+        updateSliderDisplay();
+    });
+
+    function updateSliderDisplay() {
+        const cutoff = timeScale(commitProgress);
+        timeSpan.textContent = cutoff.toLocaleString('en', {
+            dateStyle: 'long',
+            timeStyle: 'short'
+        });
+        filterCommitsBySlider(cutoff);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -165,6 +195,11 @@ function createScatterPlot() {
         });
 
     brushSelector();
+}
+
+function filterCommitsBySlider(cutoffDate) {
+    d3.selectAll('.dots circle')
+      .classed('hidden', d => d.datetime > cutoffDate);
 }
 
 function updateTooltipContent(commit) {

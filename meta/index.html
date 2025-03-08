@@ -15,13 +15,26 @@
     <div id="stats" class="stats-grid"></div>
 
     <h2>Commits by Time of Day</h2>
+   
+    <label for="commit-progress">
+      Show commits until: <span id="selected-time"></span>
+    </label>
+    <input 
+      type="range" 
+      id="commit-progress"
+      min="0"
+      max="100"
+      step="1"
+      value="100"
+      style="margin-left: 1em; width: 300px;"
+    >
+
     <div id="chart"></div>
 
     <p id="selection-count">No commits selected</p>
     <dl id="language-breakdown" class="stats"></dl>
 
-
-    <dl id = "commit-tooltip" class="info tooltip">
+    <dl id="commit-tooltip" class="info tooltip">
         <dt>Commit</dt>
         <dd>
             <a href="" id="commit-link" target="_blank"></a>
