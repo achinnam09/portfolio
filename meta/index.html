@@ -15,43 +15,47 @@
   <div id="stats" class="stats-grid"></div>
 
   <h2>Commits by Time of Day</h2>
-
-  <!-- Step 3.1: Scrollytelling container -->
+  <!-- First scrollytelling (chronological) -->
   <div id="scrollytelling">
-    <!-- The left side: scrollable content -->
+    <!-- Left: scrollable narrative items (chronological) -->
     <div id="scroll-container">
-      <!-- A large spacer to create vertical scroll space -->
       <div id="spacer"></div>
-      <!-- We'll dynamically place scrolly items here -->
       <div id="items-container"></div>
     </div>
-
-    <!-- The right side: your existing scatterplot -->
+    <!-- Right: scatterplot -->
     <div id="chart"></div>
   </div>
 
-  <!-- Unit visualization below scrolly -->
+  <!-- Unit visualization (first scrolly) -->
   <div id="files" class="files"></div>
 
-  <!-- Brush-based selection info below that -->
+  <!-- Brush-based selection info -->
   <p id="selection-count">No commits selected</p>
   <dl id="language-breakdown" class="stats"></dl>
 
   <dl id="commit-tooltip" class="info tooltip">
     <dt>Commit</dt>
     <dd><a href="" id="commit-link" target="_blank"></a></dd>
-
     <dt>Date</dt>
     <dd id="commit-date"></dd>
-
     <dt>Time</dt>
     <dd id="commit-time"></dd>
-
     <dt>Author</dt>
     <dd id="commit-author"></dd>
-
     <dt>Lines Edited</dt>
     <dd id="commit-lines"></dd>
   </dl>
+
+  <!-- SECOND scrollytelling (Longest line length) -->
+  <h2>Longest Line Length Scrollytelling</h2>
+  <div id="scrollytelling-2">
+    <!-- Left: scrollable narrative items (sorted by longestLine) -->
+    <div id="scroll-container-2">
+      <div id="spacer-2"></div>
+      <div id="items-container-2"></div>
+    </div>
+    <!-- Right: Unit visualization for longestLine -->
+    <div id="files-longest" class="files"></div>
+  </div>
 </body>
 </html>

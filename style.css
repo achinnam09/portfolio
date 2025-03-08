@@ -8,9 +8,7 @@ nav {
     display: flex;
     margin-bottom: 1em;
     --border-color: oklch(50% 10% 200 / 40%);
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 nav a {
     flex: 1;
@@ -250,13 +248,11 @@ path {
     margin: 2rem auto;
     text-align: center;
 }
-
 .stats-header {
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 20px;
 }
-
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -266,7 +262,6 @@ path {
     align-items: center;
     justify-content: center;
 }
-
 .stats-grid dt {
     font-size: 0.85em;
     font-weight: bold;
@@ -274,7 +269,6 @@ path {
     color: #666;
     grid-row: 1;
 }
-
 .stats-grid dd {
     font-size: 1.5em;
     font-weight: bold;
@@ -282,17 +276,14 @@ path {
     margin: 0;
     grid-row: 2;
 }
-
 .gridlines path {
     stroke: none;
 }
-
 .gridlines line {
     stroke: #ddd;  /* Light gray */
     stroke-opacity: 0.7;
     shape-rendering: crispEdges;
 }
-
 dl.info {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -308,23 +299,19 @@ dl.info {
     transition-duration: 500ms;
     transition-property: opacity, visibility;
 }
-
 dl.info dt {
     font-weight: bold;
     color: #666;
     text-align: right;
 }
-
 dl.info dd {
     margin: 0;
     padding: 0;
 }
-
 dl.info[hidden]:not(:hover, :focus-within) {
     opacity: 0;
     visibility: hidden;
 }
-
 .tooltip {
     position: fixed;
     top: 1em;
@@ -340,51 +327,42 @@ dl.info[hidden]:not(:hover, :focus-within) {
     z-index: 1000;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
-
 #commit-tooltip {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 5px 10px;
     align-items: center;
 }
-
 #commit-tooltip dt {
     font-weight: bold;
     color: #555;
 }
-
 #commit-tooltip dd {
     margin: 0;
     font-weight: normal;
     color: #222;
 }
-
 #commit-tooltip a {
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
 }
-
 #commit-tooltip a:hover {
     text-decoration: underline;
 }
-
 circle {
     transition: transform 200ms ease-in-out;
     transform-origin: center;
     transform-box: fill-box;
 }
-
 circle:hover {
     transform: scale(1.5);
 }
-
 @keyframes marching-ants {
     to {
         stroke-dashoffset: -8;
     }
 }
-
 .selection {
     fill-opacity: 0.1;
     stroke: black;
@@ -392,11 +370,9 @@ circle:hover {
     stroke-dasharray: 5 3;
     animation: marching-ants 2s linear infinite;
 }
-
 circle.selected {
     fill: #ff6b6b; /* Highlight color */
 }
-
 #language-breakdown {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -409,21 +385,18 @@ circle.selected {
     margin: 1.5rem auto;
     text-align: left;
 }
-
 #language-breakdown dt {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85em;
     color: #666;
 }
-
 #language-breakdown dd {
     font-size: 1.1em;
     font-weight: bold;
     color: #333;
     margin: 0;
 }
-
 #language-breakdown dt::after {
     content: "";
     display: block;
@@ -432,24 +405,18 @@ circle.selected {
     background: #ddd;
     margin-top: 5px;
 }
-
 .files {
     display: grid;
     gap: 0.5em;
     margin-top: 1em;
 }
-
-/* Step 2.2: Switch from .file-row to <dl>, so remove .file-row if you want.
-   Or just keep it unused. */
+/* For scrollytelling unit visualization items */
 .line {
-    /* Each line is a small square (unit) */
     width: 1em;
     aspect-ratio: 1;
     margin: 0.1em;
     border-radius: 3px;
 }
-
-/* dd: wrap .line squares */
 dd {
     display: flex;
     flex-wrap: wrap;
@@ -458,35 +425,27 @@ dd {
     padding-top: 0.6em;
     margin-left: 0;
 }
-
-/* Step 3.1: Scrollytelling layout */
+/* First scrollytelling layout */
 #scrollytelling {
     display: grid;
-    /* 2 columns: left side for scrolling items, right side for the chart */
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-top: 2rem;
 }
-
-/* The left side: scrollable container */
 #scroll-container {
     height: 80vh;
     overflow-y: scroll;
     border: 1px solid #ccc;
     position: relative;
 }
-
-/* Big spacer to create vertical scroll space */
 #spacer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 2000px; /* Enough space to scroll. Adjust as needed. */
+    height: 2000px;
     background: none;
 }
-
-/* We'll place "items" absolutely on top of the spacer */
 #items-container {
     position: absolute;
     top: 0;
@@ -494,8 +453,6 @@ dd {
     width: 100%;
     pointer-events: none;
 }
-
-/* Each scrolly item */
 .item {
     position: absolute;
     width: 90%;
@@ -505,4 +462,50 @@ dd {
     box-sizing: border-box;
     padding: 0.5em;
     border-radius: 4px;
+}
+/* Second scrollytelling layout (Longest Line Length) */
+#scrollytelling-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Left: scrolly, Right: unit viz */
+    gap: 1rem;
+    margin-top: 2rem;
+    border: 1px solid #ccc;
+    padding: 1rem;
+}
+#scroll-container-2 {
+    height: 80vh;
+    overflow-y: scroll;
+    position: relative;
+    border: 1px solid #ccc;
+}
+#spacer-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Height will be set dynamically */
+    background: none;
+}
+#items-container-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+.item-longest {
+    position: absolute;
+    width: 90%;
+    margin: 0 auto;
+    background: #f5f5f5;
+    border: 2px solid #eee;
+    box-sizing: border-box;
+    padding: 0.5em;
+    border-radius: 4px;
+}
+#files-longest {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    overflow-y: auto;
+    max-height: 80vh;
 }
