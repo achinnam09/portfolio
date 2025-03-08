@@ -219,32 +219,49 @@ function updateScatterPlot(filteredCommits) {
 }
 
 /**
- * Step 2.1: Renders a file list for the given commits
+ * Step 2.2: Turn the file list into a "unit visualization"
+ * using <dl>, <dt>, <dd>, and <div class="line"> for each line.
  */
 function updateFileList(filteredCommits) {
-    // Flatten all lines from these commits
+    // Flatten all lines
     const lines = filteredCommits.flatMap(d => d.lines);
 
-    // Group lines by file name => array of [filename, lines[]]
+    // Group lines by file
     const fileGroups = d3.groups(lines, d => d.file);
 
-    // Convert to array of objects: { file, lines[] }
+    // Convert to array of { file, lines[] }
     const filesData = fileGroups.map(([file, lines]) => ({ file, lines }));
 
     // Sort by line count descending
     filesData.sort((a, b) => d3.descending(a.lines.length, b.lines.length));
 
-    // Join on <div class="file-row"> inside #files
+    // Clear old content
+    d3.select('#files').html('');
+
+    // For each file, create a <dl> with <dt> for the filename
+    // and <dd> containing many <div class="line"> for each line
     d3.select('#files')
-      .selectAll('div.file-row')
-      .data(filesData, d => d.file)  // key by file name
-      .join('div')
-      .attr('class', 'file-row')
-      .html(d => `
-        <code>${d.file}</code>
-        <div>${d.lines.length} lines</div>
-      `);
+      .selectAll('dl')
+      .data(filesData, d => d.file)
+      .join('dl')
+      .each(function(d) {
+          const sel = d3.select(this);
+          // dt: show filename & line count
+          sel.append('dt')
+             .html(`
+               <code>${d.file}</code>
+               <small>${d.lines.length} lines</small>
+             `);
+
+          // dd: create one .line <div> per line
+          const dd = sel.append('dd');
+          dd.selectAll('div.line')
+            .data(d.lines)
+            .join('div')
+            .attr('class', 'line');
+      });
 }
+
 
 function updateTooltipContent(commit) {
     const link = document.getElementById('commit-link');

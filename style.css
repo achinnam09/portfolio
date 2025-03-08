@@ -1,8 +1,4 @@
 body {
-    /*
-    Set line height to 1.5 times the font size
-    and use the )S's UI font as the website font
-    */
     font: 100%/1.5 system-ui;
     max-width: 100ch;
     margin-inline: auto;
@@ -441,12 +437,32 @@ circle.selected {
     display: grid;
     gap: 0.5em;
     margin-top: 1em;
-  }
-  .file-row {
+}
+.file-row {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 1em;
     border-bottom: 1px solid #ccc;
     padding-bottom: 0.2em;
-  }
-  
+}
+
+/* Step 2.2: new styles for the "unit visualization" lines */
+
+.line {
+    /* Each line is a small square */
+    width: 1em;
+    aspect-ratio: 1;
+    background: steelblue;
+    margin: 0.1em;
+    border-radius: 3px;
+}
+
+/* Make <dd> wrap the .line squares */
+dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: 0.15em;
+    padding-top: 0.6em;
+    margin-left: 0;
+}
