@@ -219,27 +219,27 @@ function updateScatterPlot(filteredCommits) {
 }
 
 /**
- * Step 2.2: Turn the file list into a "unit visualization"
- * using <dl>, <dt>, <dd>, and <div class="line"> for each line.
+ * Renders a file list as a unit visualization, 
+ * sorted by descending number of lines (Step 2.3).
  */
 function updateFileList(filteredCommits) {
-    // Flatten all lines
+    // Flatten all lines from these commits
     const lines = filteredCommits.flatMap(d => d.lines);
 
-    // Group lines by file
+    // Group lines by file => array of [filename, lines[]]
     const fileGroups = d3.groups(lines, d => d.file);
 
-    // Convert to array of { file, lines[] }
+    // Convert to array of objects: { file, lines[] }
     const filesData = fileGroups.map(([file, lines]) => ({ file, lines }));
 
-    // Sort by line count descending
+    // Step 2.3: Sort by line count descending
     filesData.sort((a, b) => d3.descending(a.lines.length, b.lines.length));
 
-    // Clear old content
+    // Clear old contents
     d3.select('#files').html('');
 
-    // For each file, create a <dl> with <dt> for the filename
-    // and <dd> containing many <div class="line"> for each line
+    // For each file, create a <dl> with <dt> for filename & line count,
+    // and <dd> containing a <div class="line"> for each line
     d3.select('#files')
       .selectAll('dl')
       .data(filesData, d => d.file)
@@ -261,6 +261,7 @@ function updateFileList(filteredCommits) {
             .attr('class', 'line');
       });
 }
+
 
 
 function updateTooltipContent(commit) {
