@@ -1,6 +1,6 @@
 body {
     font: 100%/1.5 system-ui;
-    max-width: 100ch;
+    max-width: 120ch; /* Changed from 100ch to 120ch */
     margin-inline: auto;
     padding: 1rem;
 }
@@ -323,7 +323,7 @@ dl.info dd {
 dl.info[hidden]:not(:hover, :focus-within) {
     opacity: 0;
     visibility: hidden;
-  }
+}
 
 .tooltip {
     position: fixed;
@@ -438,26 +438,18 @@ circle.selected {
     gap: 0.5em;
     margin-top: 1em;
 }
-.file-row {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1em;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 0.2em;
-}
 
-/* Step 2.2: new styles for the "unit visualization" lines */
-
+/* Step 2.2: Switch from .file-row to <dl>, so remove .file-row if you want.
+   Or just keep it unused. */
 .line {
-    /* Each line is a small square */
+    /* Each line is a small square (unit) */
     width: 1em;
     aspect-ratio: 1;
-    background: steelblue;
     margin: 0.1em;
     border-radius: 3px;
 }
 
-/* Make <dd> wrap the .line squares */
+/* dd: wrap .line squares */
 dd {
     display: flex;
     flex-wrap: wrap;
@@ -465,4 +457,52 @@ dd {
     gap: 0.15em;
     padding-top: 0.6em;
     margin-left: 0;
+}
+
+/* Step 3.1: Scrollytelling layout */
+#scrollytelling {
+    display: grid;
+    /* 2 columns: left side for scrolling items, right side for the chart */
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* The left side: scrollable container */
+#scroll-container {
+    height: 80vh;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+/* Big spacer to create vertical scroll space */
+#spacer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2000px; /* Enough space to scroll. Adjust as needed. */
+    background: none;
+}
+
+/* We'll place "items" absolutely on top of the spacer */
+#items-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Each scrolly item */
+.item {
+    position: absolute;
+    width: 90%;
+    margin: 0 auto;
+    background: #fafafa;
+    border: 2px solid #eee;
+    box-sizing: border-box;
+    padding: 0.5em;
+    border-radius: 4px;
 }

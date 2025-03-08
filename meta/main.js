@@ -4,11 +4,23 @@ let xScale, yScale;
 let brushSelection = null;
 let selectedCommits = [];
 
-let commitProgress = 100;
-let timeScale;
 let svg, dots, gridlines;
 
+// A color scale for line types
+const lineColor = d3.scaleOrdinal(d3.schemeTableau10);
+
+/* Step 3 & 4: Scrolly constants and references */
+let scrollContainerSel, itemsContainerSel;
+
+/* We'll treat each commit as a scrolly 'item'. 
+   ITEM_HEIGHT must be tall enough for your narrative. */
+const ITEM_HEIGHT = 80;  
+let scrollyData = [];    // will hold commits sorted by datetime
+let NMB_ITEMS = 0;       // will become scrollyData.length
+const VISIBLE_COUNT = 6; // how many commits to show at once in scrolly
+
 async function loadData() {
+    // Load CSV data
     data = await d3.csv('loc.csv', (row) => ({
         ...row,
         line: Number(row.line),
@@ -19,48 +31,96 @@ async function loadData() {
         datetime: new Date(row.datetime),
     }));
 
+    // Build commits array
     processCommits();
+    // Show summary stats
     displayStats();
+    // Create chart
+    initChart();
+    // Show full scatterplot initially
+    updateScatterPlot(commits);
+    // Also create the "files" list from all commits initially
+    updateFileList(commits);
 
-    initChart();                  
-    updateScatterPlot(commits);  
+    // Step 3.1: Setup scrolly references
+    scrollContainerSel = d3.select('#scroll-container');
+    itemsContainerSel  = d3.select('#items-container');
 
-    const dateExtent = d3.extent(commits, d => d.datetime);
-    timeScale = d3.scaleLinear()
-        .domain([0, 100])
-        .range(dateExtent);
+    // Sort commits by date, store as scrollyData
+    scrollyData = [...commits].sort((a, b) => a.datetime - b.datetime);
+    // Assign each commit an index for positioning
+    scrollyData.forEach((c, i) => c._index = i);
+    // Update number of items
+    NMB_ITEMS = scrollyData.length;
 
-    const slider = document.getElementById('commit-progress');
-    const timeSpan = document.getElementById('selected-time');
-
-    updateSliderDisplay();
-
-    // Step 2.1: Re-filter commits & update file list as user drags slider
-    slider.addEventListener('input', (e) => {
-        commitProgress = +e.target.value;
-        updateSliderDisplay();
+    // Listen for scroll events, call renderItems()
+    scrollContainerSel.on('scroll', () => {
+        renderItems();
     });
 
-    function updateSliderDisplay() {
-        const cutoff = timeScale(commitProgress);
-        timeSpan.textContent = cutoff.toLocaleString('en', {
-            dateStyle: 'long',
-            timeStyle: 'short'
-        });
-
-        const filteredCommits = commits.filter(d => d.datetime <= cutoff);
-        updateScatterPlot(filteredCommits);
-
-        // Step 2.1: Now also update the file list
-        updateFileList(filteredCommits);
-    }
+    // Render initial items
+    renderItems();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
 });
 
+/**
+ * Step 4.2: A scrolly renderer that uses real commits for a "dummy narrative"
+ * and also updates the scatterplot & file list with the slice of commits.
+ */
+function renderItems() {
+    // 1) How far we've scrolled
+    const scrollTop = scrollContainerSel.node().scrollTop;
+
+    // 2) Which items to display
+    const startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
+    const endIndex   = startIndex + VISIBLE_COUNT;
+
+    // 3) Slice the commits in scrolly
+    const dataSlice = scrollyData.slice(startIndex, endIndex);
+
+    // 4) Bind data to .item elements
+    const items = itemsContainerSel.selectAll('.item')
+        .data(dataSlice, d => d.id);
+
+    // 5) Remove old
+    items.exit().remove();
+
+    // 6) Enter new
+    const itemsEnter = items.enter()
+        .append('div')
+        .attr('class', 'item');
+
+    // 7) Enter + Update: position and fill with a "dummy narrative"
+    itemsEnter.merge(items)
+        .style('top', d => (d._index * ITEM_HEIGHT) + 'px')
+        .html(d => {
+            const dateStr = d.datetime.toLocaleString('en', {
+                dateStyle: 'full',
+                timeStyle: 'short'
+            });
+            return `
+              <div>
+                <strong>${dateStr}</strong>
+                <a href="${d.url}" target="_blank">Open Commit</a>
+              </div>
+              <div>
+                Another glorious commit by <em>${d.author}</em>! 
+                We had <strong>${d.totalLines}</strong> lines. 
+                It was absolutely wonderful!
+              </div>
+            `;
+        });
+
+    // Also update scatterplot & file list with these commits
+    updateScatterPlot(dataSlice);
+    updateFileList(dataSlice);
+}
+
 function processCommits() {
+    // Groups data by commit SHA, merges lines
     commits = d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
         let first = lines[0];
         let {author, date, time, timezone, datetime} = first;
@@ -99,15 +159,19 @@ function displayStats() {
     const stats = [
         { label: 'Total LOC', value: data.length },
         { label: 'Total Commits', value: commits.length },
-        { label: 'Average File Length (lines)', value: d3.mean(d3.rollups(data, v => d3.max(v, d => d.line), d => d.file), d => d[1]).toFixed(2) },
+        { label: 'Average File Length (lines)', value: d3.mean(
+            d3.rollups(data, v => d3.max(v, d => d.line), d => d.file), d => d[1]
+          ).toFixed(2) },
         { label: 'Average Line Length (characters)', value: d3.mean(data, d => d.length).toFixed(2) },
         { label: 'Number of Files', value: d3.groups(data, d => d.file).length },
-        { label: 'Most Productive Period', value: d3.greatest(d3.rollups(data, v => v.length, d => {
-            let hour = d.datetime.getHours();
-            return hour >= 6 && hour < 12 ? 'Morning' :
-                   hour >= 12 && hour < 18 ? 'Afternoon' :
-                   hour >= 18 && hour < 24 ? 'Evening' : 'Night';
-        }), d => d[1])?.[0] }
+        { label: 'Most Productive Period', value: d3.greatest(
+            d3.rollups(data, v => v.length, d => {
+                let hour = d.datetime.getHours();
+                return hour >= 6 && hour < 12 ? 'Morning' :
+                       hour >= 12 && hour < 18 ? 'Afternoon' :
+                       hour >= 18 && hour < 24 ? 'Evening' : 'Night';
+            }), d => d[1]
+          )?.[0] }
     ];
 
     stats.forEach(stat => {
@@ -147,6 +211,12 @@ function updateScatterPlot(filteredCommits) {
         width: width - margin.left - margin.right,
         height: height - margin.top - margin.bottom
     };
+
+    if (!filteredCommits.length) {
+        // If no commits to show, just clear circles
+        dots.selectAll('circle').remove();
+        return;
+    }
 
     const xDomain = d3.extent(filteredCommits, d => d.datetime);
     xScale = d3.scaleTime()
@@ -218,51 +288,34 @@ function updateScatterPlot(filteredCommits) {
         .attr('r', d => rScale(d.totalLines));
 }
 
-/**
- * Renders a file list as a unit visualization, 
- * sorted by descending number of lines (Step 2.3).
- */
 function updateFileList(filteredCommits) {
-    // Flatten all lines from these commits
     const lines = filteredCommits.flatMap(d => d.lines);
-
-    // Group lines by file => array of [filename, lines[]]
     const fileGroups = d3.groups(lines, d => d.file);
-
-    // Convert to array of objects: { file, lines[] }
     const filesData = fileGroups.map(([file, lines]) => ({ file, lines }));
-
-    // Step 2.3: Sort by line count descending
     filesData.sort((a, b) => d3.descending(a.lines.length, b.lines.length));
 
-    // Clear old contents
     d3.select('#files').html('');
 
-    // For each file, create a <dl> with <dt> for filename & line count,
-    // and <dd> containing a <div class="line"> for each line
     d3.select('#files')
       .selectAll('dl')
       .data(filesData, d => d.file)
       .join('dl')
       .each(function(d) {
           const sel = d3.select(this);
-          // dt: show filename & line count
           sel.append('dt')
              .html(`
                <code>${d.file}</code>
                <small>${d.lines.length} lines</small>
              `);
 
-          // dd: create one .line <div> per line
           const dd = sel.append('dd');
           dd.selectAll('div.line')
             .data(d.lines)
             .join('div')
-            .attr('class', 'line');
+            .attr('class', 'line')
+            .style('background', line => lineColor(line.type));
       });
 }
-
-
 
 function updateTooltipContent(commit) {
     const link = document.getElementById('commit-link');
