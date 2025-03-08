@@ -20,7 +20,8 @@ async function loadData() {
     
     processCommits();
     displayStats();
-    createScatterPlot();
+
+    updateScatterPlot(commits);
 
     const dateExtent = d3.extent(commits, d => d.datetime);
     timeScale = d3.scaleLinear()
@@ -30,10 +31,8 @@ async function loadData() {
     const slider = document.getElementById('commit-progress');
     const timeSpan = document.getElementById('selected-time');
 
-    // Initialize the displayed date
     updateSliderDisplay();
 
-    // Listen for slider input
     slider.addEventListener('input', (e) => {
         commitProgress = +e.target.value;
         updateSliderDisplay();
@@ -45,7 +44,10 @@ async function loadData() {
             dateStyle: 'long',
             timeStyle: 'short'
         });
-        filterCommitsBySlider(cutoff);
+
+        const filteredCommits = commits.filter(d => d.datetime <= cutoff);
+
+        updateScatterPlot(filteredCommits);
     }
 }
 
@@ -111,8 +113,11 @@ function displayStats() {
     });
 }
 
-function createScatterPlot() {
-    const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
+function updateScatterPlot(filteredCommits) {
+
+    d3.select('#chart').select('svg').remove();
+
+    const sortedCommits = d3.sort(filteredCommits, (d) => -d.totalLines);
 
     const width = 1000;
     const height = 600;
@@ -135,18 +140,18 @@ function createScatterPlot() {
 
     xScale = d3
         .scaleTime()
-        .domain(d3.extent(commits, (d) => d.datetime))
+        .domain(d3.extent(filteredCommits, (d) => d.datetime))
         .range([usableArea.left, usableArea.right])
         .nice();
     
     yScale = d3
         .scaleLinear()
-        .domain([0, 24])
+        .domain([0, 24]) // Remains 0-24 for hourFrac
         .range([usableArea.bottom, usableArea.top]);
 
-    const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+    const [minLines, maxLines] = d3.extent(filteredCommits, (d) => d.totalLines);
     const rScale = d3.scaleSqrt()
-        .domain([minLines, maxLines])
+        .domain([minLines || 0, maxLines || 0])
         .range([2, 30]);
 
     const gridlines = svg
@@ -195,11 +200,6 @@ function createScatterPlot() {
         });
 
     brushSelector();
-}
-
-function filterCommitsBySlider(cutoffDate) {
-    d3.selectAll('.dots circle')
-      .classed('hidden', d => d.datetime > cutoffDate);
 }
 
 function updateTooltipContent(commit) {
