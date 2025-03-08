@@ -22,8 +22,8 @@ async function loadData() {
     processCommits();
     displayStats();
 
-    initChart();                  // Create the SVG, axes, gridlines once
-    updateScatterPlot(commits);   // Draw the full scatterplot initially
+    initChart();                  
+    updateScatterPlot(commits);  
 
     const dateExtent = d3.extent(commits, d => d.datetime);
     timeScale = d3.scaleLinear()
@@ -35,7 +35,7 @@ async function loadData() {
 
     updateSliderDisplay();
 
-    // Use "input" so it updates dynamically as you drag
+    // Step 2.1: Re-filter commits & update file list as user drags slider
     slider.addEventListener('input', (e) => {
         commitProgress = +e.target.value;
         updateSliderDisplay();
@@ -50,6 +50,9 @@ async function loadData() {
 
         const filteredCommits = commits.filter(d => d.datetime <= cutoff);
         updateScatterPlot(filteredCommits);
+
+        // Step 2.1: Now also update the file list
+        updateFileList(filteredCommits);
     }
 }
 
@@ -113,9 +116,6 @@ function displayStats() {
     });
 }
 
-/**
- * Creates the SVG, axis placeholders, and gridlines group once.
- */
 function initChart() {
     const width = 1000;
     const height = 600;
@@ -125,24 +125,15 @@ function initChart() {
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
-    // We'll update these axes in updateScatterPlot
     svg.append('g').attr('class', 'x-axis');
     svg.append('g').attr('class', 'y-axis');
 
-    // Create a gridlines group
-    gridlines = svg.append('g')
-        .attr('class', 'gridlines');
-
-    dots = svg.append('g')
-        .attr('class', 'dots');
+    gridlines = svg.append('g').attr('class', 'gridlines');
+    dots = svg.append('g').attr('class', 'dots');
 
     brushSelector();
 }
 
-/**
- * Redraws the scatterplot with a new set of commits, 
- * using enter/update/exit transitions.
- */
 function updateScatterPlot(filteredCommits) {
     const width = 1000;
     const height = 600;
@@ -157,7 +148,6 @@ function updateScatterPlot(filteredCommits) {
         height: height - margin.top - margin.bottom
     };
 
-    // Domain from filtered commits, so x-axis changes with the filter
     const xDomain = d3.extent(filteredCommits, d => d.datetime);
     xScale = d3.scaleTime()
         .domain(xDomain)
@@ -173,22 +163,18 @@ function updateScatterPlot(filteredCommits) {
         .domain([minLines || 0, maxLines || 0])
         .range([2, 30]);
 
-    // Make a faster transition
     const t = svg.transition().duration(300);
 
-    // Update gridlines with a left-axis that has no labels, tickSize across
     gridlines
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .transition(t)
         .call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
-    // Update x-axis
     svg.select('.x-axis')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
         .transition(t)
         .call(d3.axisBottom(xScale));
 
-    // Update y-axis
     svg.select('.y-axis')
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .transition(t)
@@ -196,25 +182,21 @@ function updateScatterPlot(filteredCommits) {
             .tickFormat(d => String(d % 24).padStart(2, '0') + ':00')
         );
 
-    // Sort commits for consistency
     const sortedCommits = d3.sort(filteredCommits, (d) => -d.totalLines);
 
-    // Data join
     const circles = dots.selectAll('circle')
         .data(sortedCommits, d => d.id);
 
-    // EXIT: commits no longer in the filter
     circles.exit()
         .transition(t)
         .attr('r', 0)
         .remove();
 
-    // ENTER: new commits
     const circlesEnter = circles.enter()
         .append('circle')
         .attr('fill', 'steelblue')
         .style('fill-opacity', 0.7)
-        .attr('r', 0) // Start new circles at r=0 for the pop-in effect
+        .attr('r', 0)
         .attr('cx', d => xScale(d.datetime))
         .attr('cy', d => yScale(d.hourFrac))
         .on('mouseenter', (event, commit) => {
@@ -229,12 +211,39 @@ function updateScatterPlot(filteredCommits) {
             d3.select(event.currentTarget).classed('selected', isCommitSelected(commit));
         });
 
-    // ENTER + UPDATE
     circlesEnter.merge(circles)
         .transition(t)
         .attr('cx', d => xScale(d.datetime))
         .attr('cy', d => yScale(d.hourFrac))
         .attr('r', d => rScale(d.totalLines));
+}
+
+/**
+ * Step 2.1: Renders a file list for the given commits
+ */
+function updateFileList(filteredCommits) {
+    // Flatten all lines from these commits
+    const lines = filteredCommits.flatMap(d => d.lines);
+
+    // Group lines by file name => array of [filename, lines[]]
+    const fileGroups = d3.groups(lines, d => d.file);
+
+    // Convert to array of objects: { file, lines[] }
+    const filesData = fileGroups.map(([file, lines]) => ({ file, lines }));
+
+    // Sort by line count descending
+    filesData.sort((a, b) => d3.descending(a.lines.length, b.lines.length));
+
+    // Join on <div class="file-row"> inside #files
+    d3.select('#files')
+      .selectAll('div.file-row')
+      .data(filesData, d => d.file)  // key by file name
+      .join('div')
+      .attr('class', 'file-row')
+      .html(d => `
+        <code>${d.file}</code>
+        <div>${d.lines.length} lines</div>
+      `);
 }
 
 function updateTooltipContent(commit) {

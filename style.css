@@ -436,3 +436,17 @@ circle.selected {
     background: #ddd;
     margin-top: 5px;
 }
+
+.files {
+    display: grid;
+    gap: 0.5em;
+    margin-top: 1em;
+  }
+  .file-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.2em;
+  }
+  
