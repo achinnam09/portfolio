@@ -6,6 +6,7 @@ let selectedCommits = [];
 
 let commitProgress = 100;
 let timeScale;
+let svg, dots, gridlines;
 
 async function loadData() {
     data = await d3.csv('loc.csv', (row) => ({
@@ -17,11 +18,12 @@ async function loadData() {
         date: new Date(row.date + 'T00:00' + row.timezone),
         datetime: new Date(row.datetime),
     }));
-    
+
     processCommits();
     displayStats();
 
-    updateScatterPlot(commits);
+    initChart();                  // Create the SVG, axes, gridlines once
+    updateScatterPlot(commits);   // Draw the full scatterplot initially
 
     const dateExtent = d3.extent(commits, d => d.datetime);
     timeScale = d3.scaleLinear()
@@ -33,6 +35,7 @@ async function loadData() {
 
     updateSliderDisplay();
 
+    // Use "input" so it updates dynamically as you drag
     slider.addEventListener('input', (e) => {
         commitProgress = +e.target.value;
         updateSliderDisplay();
@@ -46,7 +49,6 @@ async function loadData() {
         });
 
         const filteredCommits = commits.filter(d => d.datetime <= cutoff);
-
         updateScatterPlot(filteredCommits);
     }
 }
@@ -56,28 +58,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function processCommits() {
-    commits = d3
-        .groups(data, (d) => d.commit)
-        .map(([commit, lines]) => {
-            let first = lines[0];
-            let {author, date, time, timezone, datetime} = first;
-            let ret = {
-                id: commit,
-                url: 'https://github.com/vis-society/lab-7/commit/' + commit,
-                author,
-                date,
-                time,
-                timezone,
-                datetime,
-                hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
-                totalLines: lines.length,
-            };
-            Object.defineProperty(ret, 'lines', {
-                value: lines,
-                enumerable: false,
-            });
-            return ret;
+    commits = d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
+        let first = lines[0];
+        let {author, date, time, timezone, datetime} = first;
+        let ret = {
+            id: commit,
+            url: 'https://github.com/vis-society/lab-7/commit/' + commit,
+            author,
+            date,
+            time,
+            timezone,
+            datetime,
+            hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
+            totalLines: lines.length,
+        };
+        Object.defineProperty(ret, 'lines', {
+            value: lines,
+            enumerable: false,
         });
+        return ret;
+    });
     return commits;
 }
 
@@ -113,12 +113,37 @@ function displayStats() {
     });
 }
 
+/**
+ * Creates the SVG, axis placeholders, and gridlines group once.
+ */
+function initChart() {
+    const width = 1000;
+    const height = 600;
+
+    svg = d3.select('#chart')
+        .append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .style('overflow', 'visible');
+
+    // We'll update these axes in updateScatterPlot
+    svg.append('g').attr('class', 'x-axis');
+    svg.append('g').attr('class', 'y-axis');
+
+    // Create a gridlines group
+    gridlines = svg.append('g')
+        .attr('class', 'gridlines');
+
+    dots = svg.append('g')
+        .attr('class', 'dots');
+
+    brushSelector();
+}
+
+/**
+ * Redraws the scatterplot with a new set of commits, 
+ * using enter/update/exit transitions.
+ */
 function updateScatterPlot(filteredCommits) {
-
-    d3.select('#chart').select('svg').remove();
-
-    const sortedCommits = d3.sort(filteredCommits, (d) => -d.totalLines);
-
     const width = 1000;
     const height = 600;
     const margin = { top: 10, right: 10, bottom: 30, left: 50 };
@@ -132,61 +157,66 @@ function updateScatterPlot(filteredCommits) {
         height: height - margin.top - margin.bottom
     };
 
-    const svg = d3
-        .select('#chart')
-        .append('svg')
-        .attr('viewBox', `0 0 ${width} ${height}`)
-        .style('overflow', 'visible');
-
-    xScale = d3
-        .scaleTime()
-        .domain(d3.extent(filteredCommits, (d) => d.datetime))
+    // Domain from filtered commits, so x-axis changes with the filter
+    const xDomain = d3.extent(filteredCommits, d => d.datetime);
+    xScale = d3.scaleTime()
+        .domain(xDomain)
         .range([usableArea.left, usableArea.right])
         .nice();
-    
-    yScale = d3
-        .scaleLinear()
-        .domain([0, 24]) // Remains 0-24 for hourFrac
+
+    yScale = d3.scaleLinear()
+        .domain([0, 24])
         .range([usableArea.bottom, usableArea.top]);
 
-    const [minLines, maxLines] = d3.extent(filteredCommits, (d) => d.totalLines);
+    const [minLines, maxLines] = d3.extent(filteredCommits, d => d.totalLines);
     const rScale = d3.scaleSqrt()
         .domain([minLines || 0, maxLines || 0])
         .range([2, 30]);
 
-    const gridlines = svg
-        .append('g')
-        .attr('class', 'gridlines')
-        .attr('transform', `translate(${usableArea.left}, 0)`);
+    // Make a faster transition
+    const t = svg.transition().duration(300);
 
-    gridlines.call(
-        d3.axisLeft(yScale)
-            .tickFormat('')
-            .tickSize(-usableArea.width)
-    );
-
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale)
-        .tickFormat((d) => String(d % 24).padStart(2, '0') + ':00');
-
-    svg.append('g')
-        .attr('transform', `translate(0, ${usableArea.bottom})`)
-        .call(xAxis);
-
-    svg.append('g')
+    // Update gridlines with a left-axis that has no labels, tickSize across
+    gridlines
         .attr('transform', `translate(${usableArea.left}, 0)`)
-        .call(yAxis);
+        .transition(t)
+        .call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
-    const dots = svg.append('g').attr('class', 'dots');
+    // Update x-axis
+    svg.select('.x-axis')
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
+        .transition(t)
+        .call(d3.axisBottom(xScale));
 
-    dots.selectAll('circle')
-        .data(sortedCommits)
-        .join('circle')
-        .attr('cx', (d) => xScale(d.datetime))
-        .attr('cy', (d) => yScale(d.hourFrac))
-        .attr('r', (d) => rScale(d.totalLines))
+    // Update y-axis
+    svg.select('.y-axis')
+        .attr('transform', `translate(${usableArea.left}, 0)`)
+        .transition(t)
+        .call(d3.axisLeft(yScale)
+            .tickFormat(d => String(d % 24).padStart(2, '0') + ':00')
+        );
+
+    // Sort commits for consistency
+    const sortedCommits = d3.sort(filteredCommits, (d) => -d.totalLines);
+
+    // Data join
+    const circles = dots.selectAll('circle')
+        .data(sortedCommits, d => d.id);
+
+    // EXIT: commits no longer in the filter
+    circles.exit()
+        .transition(t)
+        .attr('r', 0)
+        .remove();
+
+    // ENTER: new commits
+    const circlesEnter = circles.enter()
+        .append('circle')
         .attr('fill', 'steelblue')
         .style('fill-opacity', 0.7)
+        .attr('r', 0) // Start new circles at r=0 for the pop-in effect
+        .attr('cx', d => xScale(d.datetime))
+        .attr('cy', d => yScale(d.hourFrac))
         .on('mouseenter', (event, commit) => {
             updateTooltipContent(commit);
             updateTooltipVisibility(true);
@@ -199,7 +229,12 @@ function updateScatterPlot(filteredCommits) {
             d3.select(event.currentTarget).classed('selected', isCommitSelected(commit));
         });
 
-    brushSelector();
+    // ENTER + UPDATE
+    circlesEnter.merge(circles)
+        .transition(t)
+        .attr('cx', d => xScale(d.datetime))
+        .attr('cy', d => yScale(d.hourFrac))
+        .attr('r', d => rScale(d.totalLines));
 }
 
 function updateTooltipContent(commit) {
@@ -242,9 +277,9 @@ function updateTooltipPosition(event) {
 }
 
 function brushSelector() {
-    const svg = d3.select('svg');
-    svg.call(d3.brush().on('brush end', brushed)); 
-    svg.selectAll('.dots, .overlay ~ *').raise();
+    const svgSel = d3.select('svg');
+    svgSel.call(d3.brush().on('brush end', brushed)); 
+    svgSel.selectAll('.dots, .overlay ~ *').raise();
 }
 
 function brushed(event) {
@@ -254,7 +289,7 @@ function brushed(event) {
     } else {
         let min = { x: sel[0][0], y: sel[0][1] };
         let max = { x: sel[1][0], y: sel[1][1] };
-        selectedCommits = commits.filter((commit) => {
+        selectedCommits = commits.filter(commit => {
             let cx = xScale(commit.datetime);
             let cy = yScale(commit.hourFrac);
             return cx >= min.x && cx <= max.x && cy >= min.y && cy <= max.y;
